@@ -7,6 +7,11 @@ let parties = [];
 
 const partiesContainer = document.getElementById("parties");
 
+// Event Listeners
+
+const form = document.getElementById("add");
+form.addEventListener("submit", addParty);
+
 // Fetch Calls
 
 async function getParties() {
@@ -19,26 +24,45 @@ async function getParties() {
   }
 }
 
-// Event Listeners
+async function addParty(event, form) {
+  try {
+    event.preventDefault();
 
-// const form = document.getElementById("add");
+    const name = form.name.value;
+    const date = form.date.value;
+    const location = form.location.value;
+    const description = form.description.value;
 
-// form.addEventListener('submit', async (evt) => {
-//     evt.preventDefault()
-
-//     const
-// })
+    const response = await fetch(`${BASE_URL}/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        date: date,
+        location: location,
+        description: description,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Error creating party");
+    }
+    const json = await response.json();
+    console.log(json);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 // Render Functions
 
 function renderParties() {
-  const htmlParties = parties.map((event) => {
+  const htmlParties = parties.map((evt) => {
     let div = document.createElement("div");
     div.className = "card";
-    div.innerHTML = `<h3>${event.name}</h3>
-                         <p>${event.date}</p>
-                         <p>${event.location}</p>
-                         <p>${event.description}</p>`;
+    div.innerHTML = `<h3>${evt.name}</h3>
+                         <p>${evt.date}</p>
+                         <p>${evt.location}</p>
+                         <p>${evt.description}</p>`;
     return div;
   });
 
